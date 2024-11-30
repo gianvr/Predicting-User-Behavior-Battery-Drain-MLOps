@@ -14,7 +14,7 @@
 
 ## Vídeo de Demonstração
 
-[![Vídeo de Demonstração](https://www.databricks.com/sites/default/files/inline-images/mlops-cycle.png)](https://www.youtube.com/watch?v=yr8ccf73KNE)
+[Link](https://www.youtube.com/watch?v=yr8ccf73KNE)
 
 ## 0. Setup
 ## 0.1 Dependências
