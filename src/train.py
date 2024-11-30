@@ -16,6 +16,11 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Carrega o dataset separando as features da variável alvo.
+
+    :return: Um dataframe com as features e um dataframe com a variável alvo.
+    :rtype: tuple[pd.DataFrame, pd.DataFrame]
+    """    
     df = pd.read_csv("data/user_behavior_dataset_processed.csv")
 
     X = df.drop(["User Behavior Class"], axis=1)
@@ -24,9 +29,16 @@ def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     return X, y
 
 
-def split_data(
-    X: pd.DataFrame, y: pd.DataFrame
-) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def split_data(X: pd.DataFrame, y: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Divide o dataset em treino e teste.
+
+    :param X: Dataframe com as features.
+    :type X: pd.DataFrame
+    :param y: Dataframe com a target.
+    :type y: pd.DataFrame
+    :return: Dataframes de treino e teste para treino e teste.
+    :rtype: tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]
+    """    
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.3, random_state=42, stratify=y
     )
@@ -35,6 +47,17 @@ def split_data(
 
 
 def train(X_train: pd.DataFrame, y_train: pd.DataFrame, register_model: bool) -> Pipeline:
+    """Treina um modelo de classificação RandomForest.
+
+    :param X_train: Dataframe com as features de treino.
+    :type X_train: pd.DataFrame
+    :param y_train: Dataframe com a target de treino.
+    :type y_train: pd.DataFrame
+    :param register_model: Se True, registra o modelo no MLflow.
+    :type register_model: bool
+    :return: Modelo treinado.
+    :rtype: Pipeline
+    """    
     categorical_cols = ["Device Model", "Operating System", "Gender"]
     numerical_cols = [
         "App Usage Time (min/day)",
@@ -81,14 +104,14 @@ def train(X_train: pd.DataFrame, y_train: pd.DataFrame, register_model: bool) ->
     return model
 
 
-def export_model(model: Pipeline) -> None:
-    file_path = "models/user_behavior_model.pkl"
-
-    with open(file_path, "wb") as file:
-        pickle.dump(model, file)
-
-
 def export_metrics(y_test: pd.DataFrame, y_pred: pd.DataFrame) -> None:
+    """Exporta as métricas de avaliação do modelo.
+
+    :param y_test: Dataframe com a target de teste.
+    :type y_test: pd.DataFrame
+    :param y_pred: Dataframe com as predições do modelo.
+    :type y_pred: pd.DataFrame
+    """    
 
     accuracy = accuracy_score(y_test, y_pred)
     precision = precision_score(y_test, y_pred, average="macro")
@@ -101,9 +124,16 @@ def export_metrics(y_test: pd.DataFrame, y_pred: pd.DataFrame) -> None:
     mlflow.log_metric("f1", f1)
 
 
-def export_confusion_matrix(
-    model: Pipeline, y_test: pd.DataFrame, y_pred: pd.DataFrame
-) -> None:
+def export_confusion_matrix(model: Pipeline, y_test: pd.DataFrame, y_pred: pd.DataFrame) -> None:
+    """Exporta a matriz de confusão do modelo.
+
+    :param model: Modelo treinado.
+    :type model: Pipeline
+    :param y_test: Dataframe com a target de teste.
+    :type y_test: pd.DataFrame
+    :param y_pred: Dataframe com as predições do modelo.
+    :type y_pred: pd.DataFrame
+    """    
     conf_matrix = confusion_matrix(y_test, y_pred)
 
     cm_df = pd.DataFrame(conf_matrix, index=model.classes_, columns=model.classes_)
@@ -119,6 +149,13 @@ def export_confusion_matrix(
 
 
 def export_classification_report(y_test: pd.DataFrame, y_pred: pd.DataFrame) -> None:
+    """Exporta o relatório de classificação do modelo.
+
+    :param y_test: Dataframe com a target de teste.
+    :type y_test: pd.DataFrame
+    :param y_pred: Dataframe com as predições do modelo.
+    :type y_pred: pd.DataFrame
+    """    
     report = classification_report(y_test, y_pred, output_dict=True)
 
     with open("results/classification_report.json", "w") as file:
@@ -127,14 +164,18 @@ def export_classification_report(y_test: pd.DataFrame, y_pred: pd.DataFrame) -> 
     mlflow.log_artifact("results/classification_report.json")
 
 
-def main(register_model: bool)->None:        
+def main(register_model: bool)->None: 
+    """Função principal que carrega os dados, treina o modelo, avalia o modelo e exporta as métricas.
+
+    :param register_model: Se True, registra o modelo no MLflow.
+    :type register_model: bool
+    """           
     X, y = load_data()
     X_train, X_test, y_train, y_test = split_data(X, y)
 
     model = train(X_train, y_train, register_model)
     y_pred = model.predict(X_test)
 
-    export_model(model)
     export_metrics(y_test, y_pred)
     export_confusion_matrix(model, y_test, y_pred)
     export_classification_report(y_test, y_pred)

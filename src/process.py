@@ -4,6 +4,8 @@ from kagglehub import kagglehub
 
 
 def process_data()->None:
+    """Função que processa os dados brutos e salva o dataset processado.
+    """    
     if not os.path.exists("data/ev_charging_patterns.csv"):
         df = pd.read_csv(kagglehub.dataset_download("valakhorasani/mobile-device-usage-and-user-behavior-dataset", path='user_behavior_dataset.csv'))
         df.to_csv("data/user_behavior_dataset.csv", index=False)

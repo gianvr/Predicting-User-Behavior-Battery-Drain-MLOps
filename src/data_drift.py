@@ -11,7 +11,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 
-def data_drift(df_new: pd.DataFrame) -> None:
+def data_drift(df_new: pd.DataFrame) -> bool:
+    """Detecta data drift entre o dataset de produção e um novo dataset.
+
+    :param df_new: Novo dataset.
+    :type df_new: pd.DataFrame
+    :return: Se houve data drift.
+    :rtype: bool
+    """    
+
     df_prod = pd.read_csv("data/user_behavior_dataset_processed.csv")
     df_prod.drop(["User Behavior Class"], axis=1, inplace=True)
     
