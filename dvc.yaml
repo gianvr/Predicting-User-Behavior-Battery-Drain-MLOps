@@ -1,0 +1,15 @@
+stages:
+  preproc:
+    cmd: python src/process.py
+    deps:
+    - src/process.py
+    outs:
+    - data/user_behavior_dataset_processed.csv
+  train:
+    cmd: python src/train.py
+    deps:
+    - data/user_behavior_dataset_processed.csv
+    - src/train.py
+    outs:
+    - results/confusion_matrix.png
+    - results/classification_report.json
