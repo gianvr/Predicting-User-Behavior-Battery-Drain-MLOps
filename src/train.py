@@ -15,11 +15,14 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)-18s %(name)-8s %(levelname)-8s %(message)s",
-    datefmt="%y-%m-%d %H:%M",
-)
+def configure_logger() -> None:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)-18s %(name)-8s %(levelname)-8s %(message)s",
+        datefmt="%y-%m-%d %H:%M",
+        filename="logs/model_training.log",
+        filemode="a",
+    )
 
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     """Carrega o dataset separando as features da variável alvo.
@@ -33,6 +36,7 @@ def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     X = df.drop(["User Behavior Class"], axis=1)
     y = df["User Behavior Class"]
 
+    logging.info("Data loaded successfully.")
     return X, y
 
 
@@ -51,6 +55,7 @@ def split_data(X: pd.DataFrame, y: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataF
         X, y, test_size=0.3, random_state=42, stratify=y
     )
 
+    logging.info("Data split successfully.")
     return X_train, X_test, y_train, y_test
 
 
@@ -110,7 +115,7 @@ def train(X_train: pd.DataFrame, y_train: pd.DataFrame, register_model: bool) ->
             registered_model_name="user_behavior_model",
             input_example=X_train.head(5),
         )
-
+    logging.info("Model trained successfully.")
     return model
 
 
@@ -133,6 +138,8 @@ def export_metrics(y_test: pd.DataFrame, y_pred: pd.DataFrame) -> None:
     mlflow.log_metric("recall", recall)
     mlflow.log_metric("f1", f1)
 
+    logging.info("Metrics exported successfully.")
+
 
 def export_confusion_matrix(model: Pipeline, y_test: pd.DataFrame, y_pred: pd.DataFrame) -> None:
     """Exporta a matriz de confusão do modelo.
@@ -144,6 +151,7 @@ def export_confusion_matrix(model: Pipeline, y_test: pd.DataFrame, y_pred: pd.Da
     :param y_pred: Dataframe com as predições do modelo.
     :type y_pred: pd.DataFrame
     """    
+    logging.info("Exporting confusion matrix...")
     conf_matrix = confusion_matrix(y_test, y_pred)
 
     cm_df = pd.DataFrame(conf_matrix, index=model.classes_, columns=model.classes_)
@@ -156,6 +164,7 @@ def export_confusion_matrix(model: Pipeline, y_test: pd.DataFrame, y_pred: pd.Da
     plt.savefig("results/confusion_matrix.png")
     
     mlflow.log_artifact("results/confusion_matrix.png")
+    logging.info("Confusion matrix exported successfully.")
 
 
 def export_classification_report(y_test: pd.DataFrame, y_pred: pd.DataFrame) -> None:
@@ -166,6 +175,7 @@ def export_classification_report(y_test: pd.DataFrame, y_pred: pd.DataFrame) -> 
     :param y_pred: Dataframe com as predições do modelo.
     :type y_pred: pd.DataFrame
     """    
+    logging.info("Exporting classification report...")
     report = classification_report(y_test, y_pred, output_dict=True)
 
     with open("results/classification_report.json", "w") as file:
@@ -173,6 +183,7 @@ def export_classification_report(y_test: pd.DataFrame, y_pred: pd.DataFrame) -> 
 
     mlflow.log_artifact("results/classification_report.json")
 
+    logging.info("Classification report exported successfully.")
 
 def main(register_model: bool)->None: 
     """Função principal que carrega os dados, treina o modelo, avalia o modelo e exporta as métricas.
@@ -194,6 +205,7 @@ def main(register_model: bool)->None:
 
 
 if __name__ == "__main__":
+    configure_logger()
     register_model = True
     
     mlflow.set_experiment("User Behavior Classification")
