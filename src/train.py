@@ -1,5 +1,5 @@
 import json
-import pickle
+import logging
 
 import matplotlib.pyplot as plt
 import mlflow
@@ -15,12 +15,19 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)-18s %(name)-8s %(levelname)-8s %(message)s",
+    datefmt="%y-%m-%d %H:%M",
+)
+
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     """Carrega o dataset separando as features da variável alvo.
 
     :return: Um dataframe com as features e um dataframe com a variável alvo.
     :rtype: tuple[pd.DataFrame, pd.DataFrame]
     """    
+    logging.info("Loading data...")
     df = pd.read_csv("data/user_behavior_dataset_processed.csv")
 
     X = df.drop(["User Behavior Class"], axis=1)
@@ -39,6 +46,7 @@ def split_data(X: pd.DataFrame, y: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataF
     :return: Dataframes de treino e teste para treino e teste.
     :rtype: tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]
     """    
+    logging.info("Splitting data...")
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.3, random_state=42, stratify=y
     )
@@ -58,6 +66,8 @@ def train(X_train: pd.DataFrame, y_train: pd.DataFrame, register_model: bool) ->
     :return: Modelo treinado.
     :rtype: Pipeline
     """    
+    logging.info("Training model...")
+
     categorical_cols = ["Device Model", "Operating System", "Gender"]
     numerical_cols = [
         "App Usage Time (min/day)",
@@ -112,7 +122,7 @@ def export_metrics(y_test: pd.DataFrame, y_pred: pd.DataFrame) -> None:
     :param y_pred: Dataframe com as predições do modelo.
     :type y_pred: pd.DataFrame
     """    
-
+    logging.info("Exporting metrics...")
     accuracy = accuracy_score(y_test, y_pred)
     precision = precision_score(y_test, y_pred, average="macro")
     recall = recall_score(y_test, y_pred, average="macro")
@@ -179,6 +189,8 @@ def main(register_model: bool)->None:
     export_metrics(y_test, y_pred)
     export_confusion_matrix(model, y_test, y_pred)
     export_classification_report(y_test, y_pred)
+
+    logging.info("Model training completed.")
 
 
 if __name__ == "__main__":

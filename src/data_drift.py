@@ -87,7 +87,11 @@ def data_drift(df_new: pd.DataFrame) -> bool:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)-18s %(name)-8s %(levelname)-8s %(message)s",
+        datefmt="%y-%m-%d %H:%M",
+    )
     df_new = pd.read_csv("data/user_behavior_dataset_processed.csv").sample(frac=0.6, random_state=42)
     
     mlflow.set_experiment("Data Drift")
@@ -98,4 +102,3 @@ if __name__ == "__main__":
         drift_detect = data_drift(df_new)
         mlflow.log_metric("data_drift", drift_detect[0])
         mlflow.log_param("accuracy", drift_detect[1])
-
