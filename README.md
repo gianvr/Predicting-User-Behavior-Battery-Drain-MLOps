@@ -130,6 +130,6 @@ dvc repro
 
 ## Referências
 
-- Notebook: [User Behavior Dataset](https://www.kaggle.com/code/pavankumar4757/predicting-user-behavior-battery-drain-100#Model-For-Classification-of-User-Behavior)
+- Notebook: [User Behavior Notebook](https://www.kaggle.com/code/pavankumar4757/predicting-user-behavior-battery-drain-100#Model-For-Classification-of-User-Behavior)
 
 - Dataset: [User Behavior Dataset](https://www.kaggle.com/datasets/valakhorasani/mobile-device-usage-and-user-behavior-dataset)
