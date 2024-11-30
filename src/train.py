@@ -16,6 +16,8 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 
 def configure_logger() -> None:
+    """Configura o logger para salvar os logs em um arquivo.
+    """    
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)-18s %(name)-8s %(levelname)-8s %(message)s",

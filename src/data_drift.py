@@ -11,6 +11,18 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 
+
+def configure_logger() -> None:
+    """Configura o logger para salvar os logs em um arquivo.
+    """    
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)-18s %(name)-8s %(levelname)-8s %(message)s",
+        datefmt="%y-%m-%d %H:%M",
+        filename="logs/data_drift.log",
+        filemode="a",
+    )
+
 def data_drift(df_new: pd.DataFrame) -> bool:
     """Detecta data drift entre o dataset de produção e um novo dataset.
 
@@ -87,11 +99,7 @@ def data_drift(df_new: pd.DataFrame) -> bool:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)-18s %(name)-8s %(levelname)-8s %(message)s",
-        datefmt="%y-%m-%d %H:%M",
-    )
+    configure_logger()
     df_new = pd.read_csv("data/user_behavior_dataset_processed.csv").sample(frac=0.6, random_state=42)
     
     mlflow.set_experiment("Data Drift")
