@@ -1,10 +1,40 @@
 # Predicting User Behavior & Battery Drain 📱🔋 100% - MLOps
 
-## 0. Dependências
+
+<div align="center" style="max-width:68rem;">
+<table>
+  <tr>
+    <td align="center">
+        <a href="https://github.com/gianvr"><img src="https://avatars.githubusercontent.com/gianvr" alt="Giancarlo Ruggiero" width="100" style="border-radius: 50%;" /><br />
+        <sub><b>Giancarlo Ruggiero</b></sub></a><br />
+        Developer
+    </td>
+</table>
+</div>
+
+## Vídeo de Demonstração
+
+[![Vídeo de Demonstração](https://www.databricks.com/sites/default/files/inline-images/mlops-cycle.png)](https://www.youtube.com/watch?v=yr8ccf73KNE)
+
+## 0. Setup
+## 0.1 Dependências
 
 ```bash
 pip install -r requirements.txt
 ```
+
+### 0.2 .env
+
+Na raiz do projeto existe um arquivo `.env.example` que deve ser copiado e renomeado para `.env` e preenchido com as credenciais da AWS.
+
+### 0.3 AWS
+
+Também é necessário configurar as credenciais da AWS. Para isso, execute:
+
+```bash
+aws configure
+```
+
 ## 1. Input de Dados
 
 Os dados são baixados e pré-processados automaticamente. Para isso, execute:
